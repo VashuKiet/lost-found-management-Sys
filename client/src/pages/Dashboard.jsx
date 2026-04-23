@@ -6,7 +6,7 @@ import ItemCard from '../components/ItemCard';
 import { LogOut, Filter, Search } from 'lucide-react';
 import ItemTree from '../components/ItemTree';
 
-const Dashboard = () => {
+const Dashboard = ({ setToken }) => {
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('All');
   const navigate = useNavigate();
@@ -19,11 +19,13 @@ const Dashboard = () => {
         headers: { 'x-auth-token': localStorage.getItem('token') },
         params: typeFilter !== 'All' ? { type: typeFilter } : {}
       };
-      const res = await axios.get('http://localhost:5000/api/items', config);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await axios.get(`${apiUrl}/api/items`, config);
       setItems(res.data);
     } catch (err) {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
+        setToken(null);
         navigate('/login');
       }
     }
@@ -31,7 +33,11 @@ const Dashboard = () => {
 
   useEffect(() => { fetchItems(filter); }, [filter]);
 
-  const onLogout = () => { localStorage.removeItem('token'); navigate('/login'); };
+  const onLogout = () => { 
+    localStorage.removeItem('token'); 
+    setToken(null);
+    navigate('/login'); 
+  };
 
   const handleItemAdded = (newItem) => {
     if (filter === 'All' || filter === newItem.Type) {

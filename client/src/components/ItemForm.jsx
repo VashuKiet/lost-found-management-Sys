@@ -28,7 +28,8 @@ const ItemForm = ({ onItemAdded }) => {
         }
       };
 
-      const res = await axios.post('http://localhost:5000/api/items', formData, config);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await axios.post(`${apiUrl}/api/items`, formData, config);
       onItemAdded(res.data);
       setFormData({ ItemName: '', Description: '', Type: 'Lost', Location: '', ContactInfo: '', Date: '' });
     } catch (err) {

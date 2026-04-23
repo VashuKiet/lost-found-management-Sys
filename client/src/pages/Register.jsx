@@ -24,7 +24,8 @@ const Register = () => {
           'Content-Type': 'application/json'
         }
       };
-      await axios.post('http://localhost:5000/api/register', formData, config);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      await axios.post(`${apiUrl}/api/register`, formData, config);
       navigate('/login');
     } catch (err) {
       setError(err.response?.data?.msg || 'An error occurred during registration');

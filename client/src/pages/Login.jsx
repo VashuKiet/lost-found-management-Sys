@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import HalftoneWave from '../components/HalftoneWave';
 
-const Login = () => {
+const Login = ({ setToken }) => {
   const [formData, setFormData] = useState({
     Email: '',
     Password: ''
@@ -23,9 +23,11 @@ const Login = () => {
           'Content-Type': 'application/json'
         }
       };
-      const res = await axios.post('http://localhost:5000/api/login', formData, config);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await axios.post(`${apiUrl}/api/login`, formData, config);
       localStorage.setItem('token', res.data.token);
-      window.location.href = '/dashboard'; // Force reload to update auth state in App.js
+      setToken(res.data.token);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.msg || 'Invalid Credentials');
     }
